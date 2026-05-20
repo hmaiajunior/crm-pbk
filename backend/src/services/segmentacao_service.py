@@ -12,7 +12,7 @@ async def _get_segmento_by_nome(db: AsyncSession, nome: str) -> Segmento | None:
 
 
 async def evaluate_client(db: AsyncSession, cliente: Cliente) -> None:
-    now = datetime.now(timezone.utc).replace(tzinfo=None)
+    now = datetime.now(timezone.utc)
     cutoff_inativo = now - timedelta(days=30)
 
     await db.execute(delete(ClienteSegmento).where(ClienteSegmento.cliente_id == cliente.id))

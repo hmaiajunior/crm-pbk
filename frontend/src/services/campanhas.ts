@@ -22,8 +22,13 @@ export interface GerarCampanhaInput {
   segmento_id?: string;
 }
 
+export interface CampanhaListResponse {
+  total: number;
+  items: Campanha[];
+}
+
 export const campanhasService = {
-  getCampanhas: () => api.get<Campanha[]>("/campanhas"),
+  getCampanhas: () => api.get<CampanhaListResponse>("/campanhas"),
   gerarCampanha: (input: GerarCampanhaInput) =>
     api.post<Campanha>("/campanhas/gerar", input),
   editarCampanha: (id: string, data: Partial<Pick<Campanha, "copy" | "orcamento_sugerido">>) =>

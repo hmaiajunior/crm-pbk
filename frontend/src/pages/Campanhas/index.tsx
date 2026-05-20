@@ -24,7 +24,7 @@ export default function Campanhas() {
   const [confirmAction, setConfirmAction] = useState<{ id: string; action: "aprovar" | "rejeitar" } | null>(null);
 
   useEffect(() => {
-    campanhasService.getCampanhas().then(setCampanhas).catch(() => {}).finally(() => setLoading(false));
+    campanhasService.getCampanhas().then((data) => setCampanhas(data.items)).catch(() => {}).finally(() => setLoading(false));
   }, []);
 
   async function handleConfirm() {
