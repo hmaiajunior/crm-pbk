@@ -4,6 +4,7 @@ const navLinks = [
   { to: "/dashboard", label: "Dashboard" },
   { to: "/clientes", label: "Clientes" },
   { to: "/conversas", label: "Conversas" },
+  { to: "/acoes", label: "Ações" },
   { to: "/campanhas", label: "Campanhas" },
 ];
 
