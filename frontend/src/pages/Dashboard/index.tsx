@@ -25,6 +25,12 @@ export default function Dashboard() {
         >
           Ver campanhas →
         </Link>
+        <Link
+          to="/acoes"
+          className="text-sm text-blue-600 hover:underline"
+        >
+          Ver ações →
+        </Link>
       </div>
     </div>
   );

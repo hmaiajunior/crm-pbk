@@ -5,6 +5,7 @@ import Clientes from "./pages/Clientes";
 import ClienteDetalhe from "./pages/ClienteDetalhe";
 import Conversas from "./pages/Conversas";
 import Campanhas from "./pages/Campanhas";
+import Acoes from "./pages/Acoes";
 import Layout from "./components/Layout";
 
 function isAuthenticated() {
@@ -65,6 +66,14 @@ export default function App() {
           element={
             <ProtectedRoute>
               <Campanhas />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/acoes"
+          element={
+            <ProtectedRoute>
+              <Acoes />
             </ProtectedRoute>
           }
         />
