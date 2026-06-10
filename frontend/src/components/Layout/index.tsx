@@ -1,4 +1,6 @@
+import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { acoesService } from "../../services/acoes";
 
 const navLinks = [
   { to: "/dashboard", label: "Dashboard" },
@@ -8,9 +10,31 @@ const navLinks = [
   { to: "/campanhas", label: "Campanhas" },
 ];
 
+const PENDENTES_POLL_MS = 45_000;
+
 export default function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   const navigate = useNavigate();
+  const [pendentes, setPendentes] = useState(0);
+
+  useEffect(() => {
+    let active = true;
+    const fetchCount = () =>
+      acoesService
+        .contar("sugerida")
+        .then((r) => active && setPendentes(r.count))
+        .catch(() => {});
+    fetchCount();
+    const id = setInterval(fetchCount, PENDENTES_POLL_MS);
+    // Atualiza ao voltar para a aba e ao navegar entre páginas.
+    const onFocus = () => fetchCount();
+    window.addEventListener("focus", onFocus);
+    return () => {
+      active = false;
+      clearInterval(id);
+      window.removeEventListener("focus", onFocus);
+    };
+  }, [location.pathname]);
 
   function logout() {
     localStorage.removeItem("token");
@@ -29,13 +53,18 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <Link
               key={to}
               to={to}
-              className={`block px-4 py-2.5 text-sm ${
+              className={`flex items-center justify-between px-4 py-2.5 text-sm ${
                 location.pathname.startsWith(to)
                   ? "bg-gray-700 text-white"
                   : "text-gray-400 hover:text-white hover:bg-gray-800"
               }`}
             >
-              {label}
+              <span>{label}</span>
+              {to === "/acoes" && pendentes > 0 && (
+                <span className="ml-2 inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 rounded-full bg-red-500 text-white text-xs font-semibold">
+                  {pendentes > 99 ? "99+" : pendentes}
+                </span>
+              )}
             </Link>
           ))}
         </nav>

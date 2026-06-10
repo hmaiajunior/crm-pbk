@@ -13,18 +13,40 @@ function tipoAcaoLabel(t: string) {
   return t;
 }
 
+const AUTO_REFRESH_MS = 30_000;
+
 export default function Acoes() {
   const [acoes, setAcoes] = useState<AcaoItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState("");
+  const [updatedAt, setUpdatedAt] = useState<Date | null>(null);
+
+  async function load(silent = false) {
+    if (silent) setRefreshing(true);
+    try {
+      const r = await acoesService.listAcoes("sugerida");
+      setAcoes(r.items);
+      setUpdatedAt(new Date());
+      setError("");
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Erro ao carregar ações");
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }
 
   useEffect(() => {
-    acoesService
-      .listAcoes("sugerida")
-      .then((r) => setAcoes(r.items))
-      .catch((e) => setError(e instanceof Error ? e.message : "Erro ao carregar ações"))
-      .finally(() => setLoading(false));
+    load();
+    const id = setInterval(() => load(true), AUTO_REFRESH_MS);
+    const onFocus = () => load(true);
+    window.addEventListener("focus", onFocus);
+    return () => {
+      clearInterval(id);
+      window.removeEventListener("focus", onFocus);
+    };
   }, []);
 
   async function handle(id: string, action: "aprovar" | "rejeitar") {
@@ -45,7 +67,28 @@ export default function Acoes() {
 
   return (
     <div className="p-6">
-      <h1 className="text-xl font-semibold text-gray-900 mb-4">Ações sugeridas</h1>
+      <div className="flex items-center justify-between mb-4">
+        <h1 className="text-xl font-semibold text-gray-900">
+          Ações sugeridas
+          {acoes.length > 0 && (
+            <span className="ml-2 text-sm font-normal text-gray-500">({acoes.length})</span>
+          )}
+        </h1>
+        <div className="flex items-center gap-3">
+          {updatedAt && (
+            <span className="text-xs text-gray-400">
+              Atualizado {updatedAt.toLocaleTimeString("pt-BR")}
+            </span>
+          )}
+          <button
+            onClick={() => load(true)}
+            disabled={refreshing}
+            className="text-sm px-3 py-1 border rounded hover:bg-gray-50 disabled:opacity-50"
+          >
+            {refreshing ? "Atualizando…" : "Atualizar"}
+          </button>
+        </div>
+      </div>
       {error && <p className="text-sm text-red-600 mb-3">{error}</p>}
 
       <div className="bg-white rounded-lg shadow overflow-hidden">

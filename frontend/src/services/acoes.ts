@@ -27,6 +27,8 @@ export interface AcoesListResponse {
 export const acoesService = {
   listAcoes: (status: StatusAcao = "sugerida") =>
     api.get<AcoesListResponse>(`/acoes?status=${status}`),
+  contar: (status: StatusAcao = "sugerida") =>
+    api.get<{ count: number }>(`/acoes/contador?status=${status}`),
   aprovar: (id: string) => api.post<{ status: StatusAcao; executada_em: string | null }>(`/acoes/${id}/aprovar`),
   rejeitar: (id: string) => api.post<{ status: StatusAcao }>(`/acoes/${id}/rejeitar`),
 };

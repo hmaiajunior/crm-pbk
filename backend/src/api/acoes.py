@@ -1,7 +1,7 @@
 import uuid
 from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.database import get_db
 from src.models.acao_agente import AcaoAgente, StatusAcao
@@ -50,6 +50,19 @@ async def list_acoes(
         clientes = {c.id: c for c in c_result.scalars().all()}
 
     return {"items": [_serialize(a, clientes.get(a.cliente_id)) for a in acoes]}
+
+
+@router.get("/contador")
+async def contar_acoes(
+    db: Annotated[AsyncSession, Depends(get_db)],
+    _: Annotated[Operador, Depends(get_current_operador)],
+    status: StatusAcao = StatusAcao.sugerida,
+):
+    """Lightweight count for the sidebar badge / polling."""
+    result = await db.execute(
+        select(func.count(AcaoAgente.id)).where(AcaoAgente.status == status)
+    )
+    return {"count": result.scalar_one()}
 
 
 @router.post("/{acao_id}/aprovar")
