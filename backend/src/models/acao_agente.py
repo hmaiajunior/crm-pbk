@@ -11,6 +11,9 @@ class TipoAcao(str, Enum):
     convite_vip = "convite_vip"
     oferta = "oferta"
     follow_up = "follow_up"
+    boas_vindas = "boas_vindas"
+    recuperacao_checkout = "recuperacao_checkout"
+    reengajamento = "reengajamento"
 
 
 class AgenteOrigem(str, Enum):
@@ -30,7 +33,7 @@ class AcaoAgente(Base):
     __table_args__ = {"schema": "crm"}
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    tipo: Mapped[TipoAcao] = mapped_column(String(20), nullable=False)
+    tipo: Mapped[TipoAcao] = mapped_column(String(40), nullable=False)
     agente: Mapped[AgenteOrigem] = mapped_column(String(20), nullable=False)
     cliente_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("crm.cliente.id"), nullable=False)
     evento_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("crm.evento.id"), nullable=True)

@@ -19,7 +19,8 @@ class Cliente(Base):
     __table_args__ = {"schema": "crm"}
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    telefone: Mapped[str] = mapped_column(String(20), unique=True, nullable=False)
+    telefone: Mapped[str | None] = mapped_column(String(20), unique=True, nullable=True)
+    email: Mapped[str | None] = mapped_column(String(255), nullable=True, index=True)
     nome: Mapped[str | None] = mapped_column(String(255), nullable=True)
     classificacao: Mapped[ClassificacaoCliente] = mapped_column(String(30), nullable=False, default=ClassificacaoCliente.lead)
     opt_in: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)

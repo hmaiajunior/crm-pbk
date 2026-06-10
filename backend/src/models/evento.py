@@ -12,6 +12,9 @@ class TipoEvento(str, Enum):
     cliente_inativo = "cliente_inativo"
     cliente_insatisfeito = "cliente_insatisfeito"
     cliente_pronto_compra = "cliente_pronto_compra"
+    cadastro_sem_pedido = "cadastro_sem_pedido"
+    checkout_abandonado = "checkout_abandonado"
+    conversou_sem_acao = "conversou_sem_acao"
 
 
 class Evento(Base):

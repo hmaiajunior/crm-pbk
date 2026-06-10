@@ -1,6 +1,12 @@
 import { api } from "./api";
 
-export type TipoAcao = "convite_vip" | "oferta" | "follow_up";
+export type TipoAcao =
+  | "convite_vip"
+  | "oferta"
+  | "follow_up"
+  | "boas_vindas"
+  | "recuperacao_checkout"
+  | "reengajamento";
 export type AgenteOrigem = "growth_agent" | "ads_agent";
 export type StatusAcao = "sugerida" | "aprovada" | "executada" | "rejeitada";
 

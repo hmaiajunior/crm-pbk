@@ -1,9 +1,31 @@
 # Contract: Leitura do Banco Playbekids
 
-**Tipo**: Leitura direta via SQLAlchemy (usuário PostgreSQL read-only)
+**Tipo**: Leitura direta via SQLAlchemy (usuário PostgreSQL read-only `crm_reader`)
 **Direção**: CRM lê → Playbekids (sem escrita)
-**Schema fonte**: `public` (Playbekids)
+**Schema fonte**: `public` (Playbekids — base **Supabase/Prisma**, identificadores camelCase entre aspas)
 **Schema destino**: `crm` (CRM)
+
+> **Atualizado em 2026-06-10:** o banco real é um Supabase (Prisma). As tabelas reais
+> são `public."User"`, `public."Order"` e `public."AbandonedCart"` — **não** `public.pedidos`.
+> Compra confirmada = `Order."paymentStatus" = 'APPROVED'`. O `crm_reader` precisa de
+> `BYPASSRLS` (RLS habilitado nessas tabelas) — rodar no Supabase: `ALTER ROLE crm_reader BYPASSRLS;`.
+
+## Tabelas reais consumidas
+
+| Tabela | Colunas usadas | Uso no CRM |
+|--------|----------------|------------|
+| `public."User"` | `id`, `name`, `email`, `phone` (nullable), `role` (RETAIL/WHOLESALE/ADMIN), `"createdAt"` | Cadastro de atacado (`role='WHOLESALE'`) → cenário `cadastro_sem_pedido` |
+| `public."Order"` | `id`, `"userId"`, `"paymentStatus"` (='APPROVED'), `"createdAt"` | Compra confirmada (`ultima_compra_em`, classificação) |
+| `public."AbandonedCart"` | `id`, `"userId"`, `subtotal`, `"createdAt"` | Checkout abandonado → cenário `checkout_abandonado` |
+
+> As colunas de data são `timestamp without time zone` (UTC naive) — a camada
+> `playbekids_db.py` converte (`_naive_utc` ao filtrar, `_aware_utc` ao retornar).
+
+---
+
+## Histórico (contrato original — `public.pedidos`)
+> O contrato abaixo assumia uma tabela `public.pedidos` que **não existe** no banco real.
+> Mantido apenas como registro histórico.
 
 ## Descrição
 

@@ -15,5 +15,13 @@ class Settings(BaseSettings):
     SMTP_PASSWORD: str = ""
     INVITE_TOKEN_TTL_HOURS: int = 48
 
+    # Growth sync job
+    SYNC_ENABLED: bool = True
+    SYNC_INTERVAL_MINUTES: int = 30
+    CADASTRO_LOOKBACK_DAYS: int = 7
+    CHECKOUT_LOOKBACK_DAYS: int = 7
+    CONVERSA_LOOKBACK_DAYS: int = 7
+    ACAO_DEDUP_DAYS: int = 7
+
 
 settings = Settings()

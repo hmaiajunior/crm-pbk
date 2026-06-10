@@ -7,6 +7,9 @@ function tipoAcaoLabel(t: string) {
   if (t === "convite_vip") return "Convite VIP";
   if (t === "oferta") return "Oferta";
   if (t === "follow_up") return "Follow-up";
+  if (t === "boas_vindas") return "Boas-vindas";
+  if (t === "recuperacao_checkout") return "Recuperar checkout";
+  if (t === "reengajamento") return "Reengajamento";
   return t;
 }
 
